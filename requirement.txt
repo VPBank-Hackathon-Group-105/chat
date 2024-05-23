@@ -1,0 +1,1 @@
+anthropic, pd, langchain, langchain_community, transformer, streamlit, pypdf, faiss-cpu, cohere_aws
