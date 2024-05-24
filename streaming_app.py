@@ -1,16 +1,13 @@
-import os
 import reasoning as glib #reference to local lib script
-from langchain_community.callbacks.streamlit import StreamlitCallbackHandler
 from langchain_core.callbacks import BaseCallbackHandler
 from embedding_search_pg import get_index_cv_upload, get_similarity_search_results
-from io import StringIO
 import streamlit as st
 from retransforming import retransform
 from cohere_aws import Client
+from upload_file import upload_docs
 
 co = Client(region_name="us-east-1")
 co.connect_to_endpoint(endpoint_name="cohere-rerank-v3-endpoint")
-
 
 #st.set_page_config(page_title="Chatbot")
 st.title("Chatbot") #page title
@@ -41,12 +38,13 @@ class StreamHandler(BaseCallbackHandler):
 with st.sidebar:
     st.subheader("Your documents")
     pdf_docs = st.file_uploader(
-        "Upload your PDFs here and click on 'Process'", type="pdf", accept_multiple_files=True)
+        "Select your files here and click on 'Upload'", type="pdf", accept_multiple_files=True)
 
-    if st.button("Process"):
+
+    if st.button("Upload"):
         with st.spinner("Processing"):
-            st.session_state.vector_index = get_index_cv_upload(pdf_docs)
-
+            #st.session_state.vector_index = get_index_cv_upload(pdf_docs)
+            upload_docs(pdf_docs)
             st.success('PDF uploaded successfully!', icon="✅")
 
 if input_text: 
