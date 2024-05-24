@@ -1,11 +1,11 @@
-from .llm_api import get_llm
+from utils.llm_api import get_llm
 
 from langchain_core.prompts import PromptTemplate
 from langchain import hub
 from langchain_core.output_parsers import StrOutputParser
 
 def retransform(input_query):
-    llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0", temperature=0)
+    llm = get_llm(model = "anthropic.claude-3-haiku-20240307-v1:0", temperature=0)
 
     def _parse(text):
         return text.strip('"').strip("**")
@@ -24,7 +24,6 @@ def retransform(input_query):
 
     response = rewriter.invoke(input_query)
 
-    print(response)
     return response
 
 if __name__ == "__main__":

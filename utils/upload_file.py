@@ -6,12 +6,12 @@ bucket = "mpqhdemobucket"
 
 def upload_docs(uploaded_files: list):
 
-
     for uploaded_file in uploaded_files:
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             file_name = uploaded_file.name
             temp_file.write(uploaded_file.getvalue())
             client.upload_file(temp_file, 'mpqhdemobucket', file_name)
+
     # for pdf_file in pdf_files_to_process:
     #     file_name = pdf_file.split('\\')[-1]  # Get the name of the file
     #     file_data = open(pdf_file, 'rb')

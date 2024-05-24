@@ -1,5 +1,5 @@
 import streamlit as st
-import utils.reasoning as glib #reference to local lib script
+import utils.agent as agent
 
 from utils.upload_file import upload_docs
 from utils.embedding_search_pg import get_index_cv_upload, get_similarity_search_results
@@ -16,7 +16,7 @@ st.title("Chatbot") #page title
 
 
 if 'memory' not in st.session_state: 
-    st.session_state.memory = glib.get_memory() 
+    st.session_state.memory = agent.get_memory() 
 
 if 'chat_history' not in st.session_state: 
     st.session_state.chat_history = [] 
@@ -44,7 +44,6 @@ with st.sidebar:
     pdf_docs = st.file_uploader(
         "Select your files here and click on 'Upload'", type="pdf", accept_multiple_files=True)
 
-
     if st.button("Upload"):
         with st.spinner("Processing"):
             #st.session_state.vector_index = get_index_cv_upload(pdf_docs)
@@ -59,12 +58,12 @@ if input_text:
     
     #need an Agent here
     callback_handler = StreamHandler(container = st.chat_message("assistant").empty())    
-    retransformed_query = retransform(input_text)
-    search_results = get_similarity_search_results(index=st.session_state.vector_index, question = retransformed_query, top_k = 20)
-    rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
+    #retransformed_query = retransform(input_text)
+    #search_results = get_similarity_search_results(index=st.session_state.vector_index, question = retransformed_query, top_k = 20)
+    #rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
 
-    st.write(rerank_results)
+    #st.write(rerank_results)
     
-    #chat_response = glib.get_chat_response(input_text=input_text, memory=st.session_state.memory,streaming_callback=callback_handler)
+    chat_response = agent.execute_response(input_query=input_text, memory=st.session_state.memory,streaming_callback=callback_handler)
     
-    #st.session_state.chat_history.append({"role":"assistant", "text":chat_response}) 
+    st.session_state.chat_history.append({"role":"assistant", "text":chat_response}) 
