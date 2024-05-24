@@ -1,20 +1,19 @@
+import os
 import tempfile
 import boto3
 
-client = boto3.client('s3')
-bucket = "mpqhdemobucket"
+s3 = boto3.resource('s3')
+bucket = os.environ.get('BUCKET_NAME')
 
 def upload_docs(uploaded_files: list):
+    files_with_metadata = []
 
     for uploaded_file in uploaded_files:
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             file_name = uploaded_file.name
             temp_file.write(uploaded_file.getvalue())
-            client.upload_file(temp_file, 'mpqhdemobucket', file_name)
+            s3_file_path = f"cv/{file_name}"
+            s3.Bucket(bucket).upload_file(temp_file.name, s3_file_path)
+            files_with_metadata.append({"file": uploaded_file, "cv_file_path": s3_file_path})
 
-    # for pdf_file in pdf_files_to_process:
-    #     file_name = pdf_file.split('\\')[-1]  # Get the name of the file
-    #     file_data = open(pdf_file, 'rb')
-    #     print(file_data)
-    #     client.upload_file(file_data, 'mpqhdemobucket', file_name)  # Use the file name as the Key
-    return 
+    return files_with_metadata
