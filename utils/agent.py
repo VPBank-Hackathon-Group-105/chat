@@ -3,6 +3,7 @@ from langchain_core.prompts import PromptTemplate
 from utils.llm_api import get_llm
 from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chains import ConversationChain
+from utils.reasoning import *
 
 def decide(input_query):
 
@@ -26,14 +27,13 @@ def decide(input_query):
 
 
     response = rewriter.invoke(input_query)
-    print(response)
 
     return response
 
 def get_memory(): #create memory for this chat session
     
     #ConversationSummaryBufferMemory requires an LLM for summarizing older messages
-    llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0")
+    llm = get_llm(model = "anthropic.claude-3-haiku-20240307-v1:0")
     
     memory = ConversationSummaryBufferMemory(llm=llm, max_token_limit=512) #Maintains a summary of previous messages
     
@@ -41,7 +41,7 @@ def get_memory(): #create memory for this chat session
 
 def get_chat_response(input_text, memory,streaming_callback): #chat client function
     
-    llm = get_llm(streaming_callback = streaming_callback)
+    llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0",streaming_callback = streaming_callback)
     
     conversation_with_summary = ConversationChain( #create a chat client
         llm = llm, 
@@ -51,10 +51,14 @@ def get_chat_response(input_text, memory,streaming_callback): #chat client funct
     chat_response = conversation_with_summary.invoke(input_text) #pass the user message and summary to the model
     return chat_response['response']
 
-def execute_response(input_query, memory, streaming_callback):
+def execute_response(input_query, index, memory, streaming_callback):
     llm_decision = decide(input_query)
+    
     if "no" in llm_decision.lower():
         response = get_chat_response(input_text = input_query, memory = memory, streaming_callback=streaming_callback)
+    else:   
+        response = get_chat_response(input_text = input_query, memory = memory, streaming_callback=streaming_callback)
+
     return response
 
 if __name__ == "__main__":

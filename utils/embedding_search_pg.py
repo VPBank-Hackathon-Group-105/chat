@@ -5,7 +5,7 @@ from .file_loader import load_docs, load_uploaded_docs
 from .llm_api import get_embedding
 
 from dotenv import load_dotenv
-from langchain.vectorstores.pgvector import PGVector
+from langchain_community.vectorstores import PGVector
 
 
 load_dotenv()

@@ -1,15 +1,8 @@
 import streamlit as st
 import utils.agent as agent
-
 from utils.upload_file import upload_docs
-from utils.embedding_search_pg import get_index_cv_upload, get_similarity_search_results
-from utils.retransforming import retransform
-
+from utils.embedding_search_pg import get_index_cv_upload
 from langchain_core.callbacks import BaseCallbackHandler
-from cohere_aws import Client
-
-co = Client(region_name="us-east-1")
-co.connect_to_endpoint(endpoint_name="cohere-rerank-v3-endpoint")
 
 #st.set_page_config(page_title="Chatbot")
 st.title("Chatbot") #page title
@@ -58,12 +51,13 @@ if input_text:
     
     #need an Agent here
     callback_handler = StreamHandler(container = st.chat_message("assistant").empty())    
-    #retransformed_query = retransform(input_text)
-    #search_results = get_similarity_search_results(index=st.session_state.vector_index, question = retransformed_query, top_k = 20)
-    #rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
+    # retransformed_query = retransform(input_text)
+    # search_results = get_similarity_search_results(index=st.session_state.vector_index, question = retransformed_query, top_k = 20)
+    # rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
 
+    #print(rerank_results[0].document['content'])
     #st.write(rerank_results)
     
-    chat_response = agent.execute_response(input_query=input_text, memory=st.session_state.memory,streaming_callback=callback_handler)
+    chat_response = agent.execute_response(input_query=input_text, index=st.session_state.vector_index, memory=st.session_state.memory,streaming_callback=callback_handler)
     
     st.session_state.chat_history.append({"role":"assistant", "text":chat_response}) 
