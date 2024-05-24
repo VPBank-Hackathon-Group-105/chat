@@ -31,6 +31,7 @@ READER_CONNECTION_STRING = PGVector.connection_string_from_db_params(
     database = os.environ.get("PGVECTOR_DATABASE")
 )
 
+
 def get_index_cv_directory(cv_directory = None): #creates and returns an in-memory vector store to be used in the application
     
     embeddings = get_embedding(model = "openai")
@@ -73,7 +74,7 @@ def get_similarity_search_results(index: PGVector, question: str, top_k: int = 1
     return flattened_results
 
 if __name__ == "__main__":
-    cv_directory = "test_data"
+    cv_directory = "test_data/"
     print("Creating index...")
     start = time.time()
     vector_index = get_index_cv_directory(cv_directory = cv_directory)

@@ -3,6 +3,7 @@ import reasoning as glib #reference to local lib script
 from langchain_community.callbacks.streamlit import StreamlitCallbackHandler
 from langchain_core.callbacks import BaseCallbackHandler
 from embedding_search_pg import get_index_cv_upload
+from io import StringIO
 
 
 st.set_page_config(page_title="Chatbot")
@@ -35,6 +36,7 @@ with st.sidebar:
     st.subheader("Your documents")
     pdf_docs = st.file_uploader(
         "Upload your PDFs here and click on 'Process'", type="pdf", accept_multiple_files=True)
+
     if st.button("Process"):
         with st.spinner("Processing"):
             st.session_state.vector_index = get_index_cv_upload(pdf_docs)

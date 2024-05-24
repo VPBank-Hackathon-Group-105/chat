@@ -66,12 +66,16 @@ def load_uploaded_docs(uploaded_files: list):
         batch_docs = []
         for pdf_file_path in pdf_files:
             pdf_loader = PyPDFLoader(pdf_file_path)
-            batch_docs.extend(pdf_loader.load_and_split(
+            loaded_docs = pdf_loader.load_and_split(
                 text_splitter=RecursiveCharacterTextSplitter(
                     chunk_size=int(os.environ.get("CHUNK_SIZE", 300)),
                     chunk_overlap=int(os.environ.get("CHUNK_OVERLAP", 10)),
                 )
-            ))
+            )
+            # Remove NUL characters from each loaded document
+            for doc in loaded_docs:
+                doc.page_content = doc.page_content.replace('\x00', '')
+                batch_docs.append(doc)
         return batch_docs
 
     # Get the list of PDF files to process
@@ -93,5 +97,6 @@ def load_uploaded_docs(uploaded_files: list):
             for batch_result in batch_docs:
                 docs.extend(batch_result)
                 processed_files += len(batch)
+    
     return docs
 
