@@ -1,12 +1,18 @@
-import streamlit as st #all streamlit commands will be available through the "st" alias
+import os
 import reasoning as glib #reference to local lib script
 from langchain_community.callbacks.streamlit import StreamlitCallbackHandler
 from langchain_core.callbacks import BaseCallbackHandler
-from embedding_search_pg import get_index_cv_upload
+from embedding_search_pg import get_index_cv_upload, get_similarity_search_results
 from io import StringIO
+import streamlit as st
+from retransforming import retransform
+from cohere_aws import Client
+
+co = Client(region_name="us-east-1")
+co.connect_to_endpoint(endpoint_name="cohere-rerank-v3-endpoint")
 
 
-st.set_page_config(page_title="Chatbot")
+#st.set_page_config(page_title="Chatbot")
 st.title("Chatbot") #page title
 
 
@@ -43,14 +49,20 @@ with st.sidebar:
 
             st.success('PDF uploaded successfully!', icon="✅")
 
-
 if input_text: 
     with st.chat_message("user"): 
         st.markdown(input_text) 
     
     st.session_state.chat_history.append({"role":"user", "text":input_text})
     
-    callback_handler = StreamHandler(container = st.chat_message("assistant").empty())
-    chat_response = glib.get_chat_response(input_text=input_text, memory=st.session_state.memory,streaming_callback=callback_handler)
+    #need an Agent here
+    callback_handler = StreamHandler(container = st.chat_message("assistant").empty())    
+    retransformed_query = retransform(input_text)
+    search_results = get_similarity_search_results(index=st.session_state.vector_index, question = retransformed_query, top_k = 20)
+    rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
+
+    st.write(rerank_results)
     
-    st.session_state.chat_history.append({"role":"assistant", "text":chat_response}) 
+    #chat_response = glib.get_chat_response(input_text=input_text, memory=st.session_state.memory,streaming_callback=callback_handler)
+    
+    #st.session_state.chat_history.append({"role":"assistant", "text":chat_response}) 

@@ -1,8 +1,7 @@
 from langchain_openai import ChatOpenAI
-from langchain_community.llms import Bedrock
+from langchain_aws import BedrockLLM, ChatBedrock
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import BedrockEmbeddings
-from langchain_community.chat_models import BedrockChat
 import os
 from dotenv import load_dotenv
 
@@ -34,7 +33,7 @@ def get_llm(streaming_callback = None, model: str = "gpt-3.5-turbo-0125", temper
             }
 
             if streaming_callback:
-                llm = Bedrock(
+                llm = BedrockLLM(
                     model_id= model,
                     model_kwargs=model_kwargs,
                     streaming=True,
@@ -42,7 +41,7 @@ def get_llm(streaming_callback = None, model: str = "gpt-3.5-turbo-0125", temper
                     region_name = "us-east-1"
                 )
             else:
-                llm = Bedrock(
+                llm = BedrockLLM(
                     model_id= model,
                     model_kwargs=model_kwargs,
                     streaming=False,
@@ -59,7 +58,7 @@ def get_llm(streaming_callback = None, model: str = "gpt-3.5-turbo-0125", temper
             }
 
             if streaming_callback:
-                llm = BedrockChat(
+                llm = ChatBedrock(
                     model_id= model,
                     model_kwargs=model_kwargs,
                     streaming=True,
@@ -67,7 +66,7 @@ def get_llm(streaming_callback = None, model: str = "gpt-3.5-turbo-0125", temper
                     region_name = "us-east-1"
                 )
             else:
-                llm = BedrockChat(
+                llm = ChatBedrock(
                     model_id= model,
                     model_kwargs=model_kwargs,
                     streaming=False,
