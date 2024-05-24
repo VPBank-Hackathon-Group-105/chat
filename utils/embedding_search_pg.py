@@ -1,15 +1,12 @@
 import os
-
-import file_loader
 import time
 
+from .file_loader import load_docs, load_uploaded_docs
+from .llm_api import get_embedding
+
 from dotenv import load_dotenv
-from langchain.indexes import VectorstoreIndexCreator
-from langchain_community.vectorstores import FAISS
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.vectorstores.pgvector import PGVector
 
-from llm_api import get_embedding
 
 load_dotenv()
 
@@ -36,7 +33,7 @@ def get_index_cv_directory(cv_directory = None): #creates and returns an in-memo
     
     embeddings = get_embedding(model = "openai")
     
-    loader = file_loader.load_docs(root_directory=cv_directory, is_split=True)
+    loader = load_docs(root_directory=cv_directory, is_split=True)
 
     if cv_directory is None:
         PGVector.from_documents(
@@ -50,17 +47,17 @@ def get_index_cv_directory(cv_directory = None): #creates and returns an in-memo
         embedding_function=embeddings
     )
 
-def get_index_cv_upload(uploaded_files: list):
+def get_index_cv_upload(uploaded_files: list = []):
     
     embeddings = get_embedding(model = "openai")
     
-    loader = file_loader.load_uploaded_docs(uploaded_files)
-
-    PGVector.from_documents(
-        documents=loader,
-        embedding=embeddings,
-        connection_string=WRITER_CONNECTION_STRING,
-    )
+    if len(uploaded_files) > 0:
+        loader = load_uploaded_docs(uploaded_files)
+        PGVector.from_documents(
+            documents=loader,
+            embedding=embeddings,
+            connection_string=WRITER_CONNECTION_STRING,
+        )
 
     return PGVector(
         connection_string=READER_CONNECTION_STRING,

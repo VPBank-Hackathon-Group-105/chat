@@ -1,15 +1,17 @@
+import time
+
+from .file_loader import load_docs
+from .llm_api import get_embedding
+
 from langchain.indexes import VectorstoreIndexCreator
 from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-import file_loader
-import time
-from llm_api import get_embedding
 
 def get_index(cv_directory): #creates and returns an in-memory vector store to be used in the application
     
     embeddings = get_embedding(model = "openai")
     
-    loader = file_loader.load_docs(root_directory=cv_directory)
+    loader = load_docs(root_directory=cv_directory)
 
     index_creator = VectorstoreIndexCreator(
         vectorstore_cls=FAISS,

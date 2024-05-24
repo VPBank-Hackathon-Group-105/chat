@@ -5,9 +5,6 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
-from dotenv import load_dotenv
-
-load_dotenv()
 
 def load_docs(root_directory: str, is_split: bool = False):
 

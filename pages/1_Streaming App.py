@@ -1,10 +1,12 @@
-import reasoning as glib #reference to local lib script
-from langchain_core.callbacks import BaseCallbackHandler
-from embedding_search_pg import get_index_cv_upload, get_similarity_search_results
 import streamlit as st
-from retransforming import retransform
+import utils.reasoning as glib #reference to local lib script
+
+from utils.upload_file import upload_docs
+from utils.embedding_search_pg import get_index_cv_upload, get_similarity_search_results
+from utils.retransforming import retransform
+
+from langchain_core.callbacks import BaseCallbackHandler
 from cohere_aws import Client
-from upload_file import upload_docs
 
 co = Client(region_name="us-east-1")
 co.connect_to_endpoint(endpoint_name="cohere-rerank-v3-endpoint")
@@ -19,6 +21,8 @@ if 'memory' not in st.session_state:
 if 'chat_history' not in st.session_state: 
     st.session_state.chat_history = [] 
 
+if 'vector_index' not in st.session_state:
+    st.session_state.vector_index = get_index_cv_upload(uploaded_files=[])
 
 for message in st.session_state.chat_history: 
     with st.chat_message(message["role"]):

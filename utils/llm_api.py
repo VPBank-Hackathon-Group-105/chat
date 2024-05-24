@@ -3,10 +3,9 @@ from langchain_aws import BedrockLLM, ChatBedrock
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import BedrockEmbeddings
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
 OPENAI_API_KEY = os.environ['OPENAI_API_KEY'] #hide this
+
 def get_llm(streaming_callback = None, model: str = "gpt-3.5-turbo-0125", temperature = 0.7):
     if "gpt" in model:
         if streaming_callback:
