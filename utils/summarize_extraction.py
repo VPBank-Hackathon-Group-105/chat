@@ -1,26 +1,42 @@
-from .llm_api import get_llm
-from .file_loader import load_docs
-
+from llm_api import get_llm
+from file_loader import load_docs
 from langchain.prompts import PromptTemplate
-from langchain.chains.summarize import load_summarize_chain
+from langchain_core.output_parsers import StrOutputParser
+from io import StringIO
+import pandas as pd
 
-def get_summary(return_intermediate_steps=False,docs=None):
-    map_prompt_template = "{text}\n\nWrite a few sentences summarizing the above:"
-    map_prompt = PromptTemplate(template=map_prompt_template, input_variables=["text"])
+def get_summary(input_query):
+    llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0", temperature=0)
+
+    def _parse(text):
+        return text.strip('"').strip("**")
+
+    template = PromptTemplate.from_template(
+        """Given this CV:{text}\n\n 
+        Extract entity from CV including: 
+        Name, year of birth (if available), skills, experiences and years of experience, education. 
+        Return in CSV format, use ";" to seperate each column so dont use any ";" in a field value:"""
+    )
+
+    summarizer = template | llm | StrOutputParser() | _parse
+
+    response = summarizer.invoke(input_query)
+
+    return validate_and_return_csv(response)    
+
+def validate_and_return_csv(response_text):
+    #returns has_error, response_content, err 
+    try:
+        csv_io = StringIO(response_text)
+        csv_file = pd.read_csv(csv_io, sep=";")
+        return False, csv_file, None #attempt to load response CSV into a dataframe
+
+    except Exception as err:
+        return True, response_text, err
     
-    combine_prompt_template = "{text}\n\nWrite a detailed analysis of the above:"
-    combine_prompt = PromptTemplate(template=combine_prompt_template, input_variables=["text"])
-    
-    
-    llm = get_llm(model="meta.llama3-8b-instruct-v1:0")
-    
-    chain = load_summarize_chain(llm, chain_type="map_reduce", map_prompt=map_prompt, combine_prompt=combine_prompt, return_intermediate_steps=return_intermediate_steps)
-    
-    if return_intermediate_steps:
-        return chain.invoke({"input_documents": docs}, return_only_outputs=True)
-    else:
-        return chain.invoke(docs, return_only_outputs=True)
-    
+
 if __name__ == "__main__":
-    docs = load_docs(root_directory="test_data/1")
-    print(get_summary(docs=docs))
+    docs = load_docs(root_directory="test_data/")    
+    doc = docs[0].page_content
+    print(get_summary(input_query=doc))
+    
