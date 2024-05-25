@@ -1,7 +1,13 @@
+import os
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
 import time
 
-from .file_loader import load_docs
-from .llm_api import get_embedding
+from utils.file_loader import load_docs
+from utils.llm_api import get_embedding
 
 from langchain.indexes import VectorstoreIndexCreator
 from langchain_community.vectorstores import FAISS

@@ -1,8 +1,14 @@
 import os
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
 import time
 
-from .file_loader import load_docs, load_uploaded_docs
-from .llm_api import get_embedding
+from utils.summarize_cv import get_summarize_documents
+from utils.file_loader import load_docs, load_uploaded_docs
+from utils.llm_api import get_embedding
 
 from dotenv import load_dotenv
 from langchain_community.vectorstores import PGVector
@@ -66,17 +72,13 @@ def get_index_cv_upload(uploaded_files: list = []):
     )
 
 #anh ơi sửa giúp em cái này, upload summary của từng CVs lên database, không upload chunk lên nữa
-def get_index_summary(uploaded_files: list = []):
+def get_index_summary(summarize_documents: list = []):
     
     embeddings = get_embedding(model = "openai")
     
-    if len(uploaded_files) > 0:
-        loader = load_uploaded_docs(uploaded_files)
-
-        for doc in loader:
-            print(doc)
+    if len(summarize_documents) > 0:
         PGVector.from_documents(
-            documents=loader,
+            documents=summarize_documents,
             embedding=embeddings,
             connection_string=WRITER_CONNECTION_STRING,
         )
