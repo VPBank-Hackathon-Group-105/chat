@@ -25,7 +25,6 @@ def get_entities(input_query):
         """Given a CV document,
         Extract entity from CV including: 
         Name, year of birth (if any), skills, experiences and years of experience, education, award/qualifications. 
-        In experiences, extract company, position, responsibilities.
         Return string in a json format, if any entity can not be extracted, simply set value as null.
         Skills, experiences, educations, awards/qualifications are list of strings. If there is no entity to be extracted, set it as null.
         Result is just json format, do not print out anything else.
