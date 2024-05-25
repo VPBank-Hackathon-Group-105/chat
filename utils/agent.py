@@ -3,7 +3,13 @@ from langchain_core.prompts import PromptTemplate
 from utils.llm_api import get_llm
 from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chains import ConversationChain
-from utils.reasoning import *
+from .reasoning import get_reason_response
+from .retransforming import retransform
+from .embedding_search_pg import get_similarity_search_results
+from cohere_aws import Client
+
+co = Client(region_name="us-east-1")
+co.connect_to_endpoint(endpoint_name="cohere-rerank-v3-endpoint")
 
 def decide(input_query):
 
@@ -39,12 +45,12 @@ def get_memory(): #create memory for this chat session
     
     return memory
 
-def get_chat_response(input_text, memory,streaming_callback): #chat client function
+def get_chat_response(input_text, memory, streaming_callback): #chat client function
     
-    llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0",streaming_callback = streaming_callback)
-    
+    llm = get_llm(model = "anthropic.claude-3-haiku-20240307-v1:0",streaming_callback = streaming_callback)
+
     conversation_with_summary = ConversationChain( #create a chat client
-        llm = llm, 
+        llm = llm,
         memory = memory, #with the summarization memory
         verbose = True #print out some of the internal states of the chain while running
     )
@@ -53,11 +59,17 @@ def get_chat_response(input_text, memory,streaming_callback): #chat client funct
 
 def execute_response(input_query, index, memory, streaming_callback):
     llm_decision = decide(input_query)
-    
+
     if "no" in llm_decision.lower():
         response = get_chat_response(input_text = input_query, memory = memory, streaming_callback=streaming_callback)
     else:   
-        response = get_chat_response(input_text = input_query, memory = memory, streaming_callback=streaming_callback)
+        retransformed_query = retransform(input_query)
+        search_results = get_similarity_search_results(index=index, question = retransformed_query, top_k = 20)
+        rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
+        #after get rerank results, we get the entities from database
+        
+        #final step: get the reasoning from agent
+        response = get_reason_response(resutls = rerank_results, text = input_query, memory = memory, streaming_callback=streaming_callback)
 
     return response
 

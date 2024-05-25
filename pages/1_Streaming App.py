@@ -69,7 +69,7 @@ if input_text:
 
     #print(rerank_results[0].document['content'])
     #st.write(rerank_results)
-    
-    chat_response = agent.execute_response(input_query=input_text, index=st.session_state.vector_index, memory=st.session_state.memory,streaming_callback=callback_handler)
+    with st.spinner("Thinking..."):
+        chat_response = agent.execute_response(input_query=input_text, index=st.session_state.vector_index, memory=st.session_state.memory,streaming_callback=callback_handler)
     
     st.session_state.chat_history.append({"role":"assistant", "text":chat_response}) 
