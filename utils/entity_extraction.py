@@ -4,8 +4,9 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from io import StringIO
 import pandas as pd
+from summarize_cv import get_summary
 
-def get_summary(input_query):
+def get_entities(input_query):
     llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0", temperature=0)
 
     def _parse(text):
@@ -14,8 +15,8 @@ def get_summary(input_query):
     template = PromptTemplate.from_template(
         """Given this CV:{text}\n\n 
         Extract entity from CV including: 
-        Name, year of birth (if available), skills, experiences and years of experience, education, award and qualifications. 
-        Return in CSV format only return CSV do not give anymore explain, 
+        Name, year of birth (if any), skills, experiences and years of experience, education, award/qualifications. 
+        Return in CSV format only return CSV do not give anymore explain,  
         use ";" to seperate each column so dont use any ";" in a field value:"""
     )
 
@@ -39,7 +40,8 @@ def validate_and_return_csv(response_text):
     
 
 if __name__ == "__main__":
-    docs = load_docs(root_directory="test_data/try")    
-    doc = docs[1].page_content
-    print(get_summary(input_query=doc))
+    docs = load_docs(root_directory="test_data/try", is_split=False)    
+    summaries = get_summary(docs=docs)
+    summary = summaries[0]['cv']
+    print(get_entities(summary))
     
