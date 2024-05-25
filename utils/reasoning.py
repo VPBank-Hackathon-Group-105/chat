@@ -5,22 +5,20 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from langchain.chains import ConversationChain
-from langchain.memory import ConversationSummaryBufferMemory
 from langchain_core.prompts import PromptTemplate
 
-from utils.embedding_search_pg import get_similarity_search_results
 from utils.llm_api import get_llm
-from utils.retransforming import retransform
 
 
-def get_reason_response(results, text, memory,streaming_callback): #chat client function
+def get_reason_response(results, query, memory,streaming_callback): #chat client function
     
 
     llm = get_llm(model= "anthropic.claude-3-sonnet-20240229-v1:0" ,streaming_callback = streaming_callback)
     prompt = PromptTemplate(input_variables=['history', 'input'], 
                             template="""The following is a conversation between a HR and an AI. 
-                            Some CVs are found, the job of the AI is to draw a table that summarize each CVs.
+                            Some CVs are found, the job of the AI is to draw a table that contain information each CVs.
                             For each CVs the AI should give some anlyze whether the HR should consider the CVs or not.
+                            Remember to draw table to summarize CV.
                             \n\nCurrent conversation:\n{history}
                             \nJD and CVs: {input}\nAI:""")
 
@@ -31,7 +29,7 @@ def get_reason_response(results, text, memory,streaming_callback): #chat client 
         memory = memory, #with the summarization memory
         verbose = True #print out some of the internal states of the chain while running
     )
-    input_text = str(results) + "\n" + text
+    input_text = query + " The result after search is: " + str(results) 
     
     chat_response = conversation_with_summary.invoke(input_text) #pass the user message and summary to the model
     return chat_response['response']

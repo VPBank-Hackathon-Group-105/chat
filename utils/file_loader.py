@@ -124,7 +124,6 @@ def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
     # Create a ThreadPoolExecutor for parallel processing
     with ThreadPoolExecutor() as executor:
         pdf_total_files = len(pdf_files_to_process)
-
         # Iterate through the PDF files in batches
         for i in tqdm(range(0, pdf_total_files, batch_size)):
             batch = pdf_files_to_process[i:i+batch_size]
@@ -133,7 +132,6 @@ def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
                 docs.extend(batch_result)
 
         docx_total_files = len(docx_files_to_process)
-
         # Iterate through the docx files in batches
         for i in tqdm(range(0, docx_total_files, batch_size)):
             batch = docx_files_to_process[i:i+batch_size]

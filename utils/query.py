@@ -136,7 +136,7 @@ class DatabaseAurora(DatabaseInterface):
             password=self.data_base_settings.password,
         )
 
-    @error_handling_with_logging()
+    #@error_handling_with_logging()
     def get_data(self, query):
         self.query = query
         cursor = self.client.cursor()
@@ -181,18 +181,29 @@ class DatabaseAurora(DatabaseInterface):
         cursor.close()
         return {"statusCode": 200, "data": True}
     
-if __name__ == "__main__":
+def query_cv(ids):
     settings = Settings(
         port=os.environ.get("PGVECTOR_PORT"),
-        server=os.environ.get("PGVECTOR_WRITER_HOST"),
+        server=os.environ.get("PGVECTOR_READER_HOST"),
         username=os.environ.get("PGVECTOR_USER"),
         password=os.environ.get("PGVECTOR_PASSWORD"),
         database_name=os.environ.get("PGVECTOR_DATABASE"),
     )
     db = DatabaseAurora(settings)
-    query = """INSERT INTO user_cv (id,name,age,cv_file_path, created_at, updated_at) 
-    VALUES (%s,%s,%s,%s,%s,%s)
-    """
-    data = (1,"Hung Van",28,"/home/hungvan/","None","None")
-    db.insert_many(query = query, data = [data])
+    query = "SELECT * FROM user_cv WHERE id IN ({})".format(','.join(map(str, ids)))
     
+    return db.get_data(query)
+
+if __name__ == "__main__":
+    settings = Settings(
+        port=os.environ.get("PGVECTOR_PORT"),
+        server=os.environ.get("PGVECTOR_READER_HOST"),
+        username=os.environ.get("PGVECTOR_USER"),
+        password=os.environ.get("PGVECTOR_PASSWORD"),
+        database_name=os.environ.get("PGVECTOR_DATABASE"),
+    )
+    db = DatabaseAurora(settings)
+    ids = (2, 3, 4)
+    query = "SELECT * FROM user_cv WHERE id IN ({})".format(','.join(map(str, ids)))
+    result = db.get_data(query)
+    print(result)

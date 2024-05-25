@@ -5,7 +5,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from io import StringIO
-
 from langchain.docstore.document import Document
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser

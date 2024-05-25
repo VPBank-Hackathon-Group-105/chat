@@ -7,3 +7,39 @@
 [2024-05-25 08:37:07,418] python INFO {'status': -1, 'error': {'message': 'not all arguments converted during string formatting', 'function_name': 'insert_many'}}
 [2024-05-25 08:37:39,471] python INFO {'status': -1, 'error': {'message': 'not all arguments converted during string formatting', 'function_name': 'insert_many'}}
 [2024-05-25 08:38:06,445] python INFO {'status': -1, 'error': {'message': 'column "name" of relation "user_cv" does not exist\nLINE 1: INSERT INTO user_cv (id,name,age,cv_file_path, created_at, u...\n                                ^\n', 'function_name': 'insert_many'}}
+[2024-05-25 16:25:36,939] python INFO {'status': -1, 'error': {'message': "DatabaseAurora.execute() missing 2 required positional arguments: 'query' and 'data'", 'function_name': 'execute'}}
+[2024-05-25 16:25:49,733] python INFO {'status': -1, 'error': {'message': "DatabaseAurora.execute() missing 2 required positional arguments: 'query' and 'data'", 'function_name': 'execute'}}
+[2024-05-25 16:26:14,242] python INFO {'status': -1, 'error': {'message': "DatabaseAurora.get_data() missing 1 required positional argument: 'query'", 'function_name': 'get_data'}}
+[2024-05-25 16:26:23,360] python INFO {'status': -1, 'error': {'message': "DatabaseAurora.get_data() missing 1 required positional argument: 'query'", 'function_name': 'get_data'}}
+[2024-05-25 16:28:39,201] python INFO {'status': -1, 'error': {'message': "DatabaseAurora.get_data() missing 1 required positional argument: 'query'", 'function_name': 'get_data'}}
+[2024-05-25 16:28:55,142] python INFO {'status': -1, 'error': {'message': "DatabaseAurora.get_data() missing 1 required positional argument: 'query'", 'function_name': 'get_data'}}
+[2024-05-25 16:29:59,645] python INFO {'status': -1, 'error': {'message': "DatabaseAurora.get_data() missing 1 required positional argument: 'query'", 'function_name': 'get_data'}}
+[2024-05-25 16:31:34,031] python INFO {'status': -1, 'error': {'message': "DatabaseAurora.get_data() missing 1 required positional argument: 'query'", 'function_name': 'get_data'}}
+[2024-05-25 16:52:04,298] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 16:52:07,193] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 16:52:16,268] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 16:52:23,056] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 16:52:42,297] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 16:52:56,762] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 16:55:54,404] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 16:55:58,500] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 16:56:14,246] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 16:58:58,126] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 16:59:02,434] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 16:59:17,914] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:00:25,278] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:00:29,723] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 17:00:45,202] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:01:42,996] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:01:47,019] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 17:02:03,316] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:02:34,897] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:02:36,795] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:02:40,824] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 17:03:38,063] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:03:39,809] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:03:45,099] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 17:04:41,072] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:04:42,937] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 17:04:48,306] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 17:04:57,458] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials

@@ -28,7 +28,7 @@ if st.button("Upload"):
             get_index_summary(summarize_docs)
 
             for summary_doc in summarize_docs:
-                st.write(summary_doc.page_content)
+                #st.write(summary_doc.page_content)
 
                 # Extract entities from the summary
                 entities = get_entities(summary_doc.page_content)

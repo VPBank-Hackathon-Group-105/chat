@@ -3,6 +3,7 @@ import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
+from .query import query_cv
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
@@ -69,17 +70,22 @@ def execute_response(input_query, index, memory, streaming_callback):
 
     if "no" in llm_decision.lower():
         response = get_chat_response(input_text = input_query, memory = memory, streaming_callback=streaming_callback)
+        return response
     else:   
         retransformed_query = retransform(input_query)
         search_results = get_similarity_search_results(index=index, question = retransformed_query, top_k = 20)
         rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
         #after get rerank results, we get the entities from database
-        
+        # print(rerank_results[0])
+        # print(rerank_results[0].document['cv'])
+        cv_ids = [result.document['cv'] for result in rerank_results]
+        cv_information = query_cv(cv_ids)
         #final step: get the reasoning from agent
-        response = get_reason_response(resutls = rerank_results, text = input_query, memory = memory, streaming_callback=streaming_callback)
+        response = get_reason_response(results = cv_information['data'], query = input_query, memory = memory, streaming_callback=streaming_callback)
+        return response
 
-    return response
+    
 
 if __name__ == "__main__":
     input_query = "CV này tệ quá, bạn tìm những người khác có được không?"
-    print(decide(input_query))
+    
