@@ -55,7 +55,7 @@ def load_docs(root_directory: str, is_split: bool = False):
 def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
 
     # Set the batch size (number of files to process in each batch)
-    batch_size = 10
+    batch_size = 5
 
     # Initialize an empty list to store loaded documents
     docs = []
@@ -88,8 +88,7 @@ def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
         for docx_file in docx_files:
             docx_loader = Docx2txtLoader(docx_file[0] if include_metadata else docx_file)
             loaded_docs = docx_loader.load()
-
-        for doc in loaded_docs:
+            for doc in loaded_docs:
                 doc.page_content = doc.page_content.replace('\x00', '')
                 if include_metadata:
                     doc.metadata.update(docx_file[1])

@@ -21,19 +21,20 @@ co.connect_to_endpoint(endpoint_name="cohere-rerank-v3-endpoint")
 
 def decide(input_query):
 
-    llm = get_llm(model = "anthropic.claude-3-haiku-20240307-v1:0", temperature=0)
+    llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0", temperature=0)
 
     def _parse(text):
         return text.strip('"').strip("**")
 
     template = PromptTemplate.from_template(
         """
-        You are the decider wether to decide  "Yes" or "No".
+        You are the decider whether to decide  "Yes" or "No" to start a tool finding for suitable applicant.
         Remember, only say "Yes" or "No" and dont say anything else.
         A HR is asking/saying:{input_query}. 
-        If the HR do not require to find CVs or seeking for somebody, simply decide "No".
+        If the HR do not require to find CVs or seeking for somebody new, simply decide "No".
         In case the HR require to find somebody/CV then decide "Yes".
         HR may require to find anotherone if the former query is not good, in this case decide "Yes".
+        HR may want to discuss more about the person that assistant chose, now simply decide "No".
         Decide:"""
     )
 

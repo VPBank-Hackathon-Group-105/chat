@@ -13,7 +13,7 @@ st.title("Upload CVs")
 
 st.subheader("Your documents")
 docs = st.file_uploader(
-    "Select your files here and click on 'Upload'", type=["pdf", "doc", "docx"], accept_multiple_files=True)
+    "Select your files here and click on 'Upload'", type=["pdf", "docx"], accept_multiple_files=True)
 
 if st.button("Upload"):
     with st.spinner("Processing"):
