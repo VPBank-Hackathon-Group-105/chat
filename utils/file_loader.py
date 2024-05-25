@@ -86,7 +86,7 @@ def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
     def process_docx_batch(docx_files):
         batch_docs = []
         for docx_file in docx_files:
-            docx_loader = Docx2txtLoader(docx_file if include_metadata else docx_file[0])
+            docx_loader = Docx2txtLoader(docx_file[0] if include_metadata else docx_file)
             loaded_docs = docx_loader.load()
 
         for doc in loaded_docs:
