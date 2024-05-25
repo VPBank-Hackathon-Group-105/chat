@@ -39,6 +39,6 @@ if st.button("Upload"):
 
                 # Update the database with the entities
                 db = get_db(is_writer=True)
-                update_cv_user(db, summary_doc.metadata["cv_user_id"], entities)
+                update_cv_user(db, entities, summary_doc.metadata["cv_user_id"])
 
             st.success('CVs uploaded successfully!', icon="✅")
