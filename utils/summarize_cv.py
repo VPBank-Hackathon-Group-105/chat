@@ -12,21 +12,31 @@ from langchain_core.output_parsers import StrOutputParser
 from utils.llm_api import get_llm
 from utils.file_loader import load_docs
 
-import pandas as pd
 
-def summary_llm(input_query):
+def summary_llm(input_query, last_summary=False):
     llm = get_llm(model = "anthropic.claude-3-haiku-20240307-v1:0", temperature=0)
 
-    template = PromptTemplate.from_template(
+    template_1 = PromptTemplate.from_template(
         """Given this as a part of CV:{text}\n\n 
         Write 1-4 sentences to summarize the CV, and it better including (if any) the following information: 
         Name, year of birth, skills, experiences and years of experience, education, award and qualifications. 
         If any of those information is missing then do not include it, do not say anything about it in the summary.
-        Importance: Be as short as possible but at most specific, if the CVs use Vietnamese then summarize in English.
+        Importance: Be as short as possible but at most specific, if the CVs use Vietnamese then summarize in English. Do not make a new line
         Summarization:"""
     )
 
-    summarizer = template | llm | StrOutputParser() 
+    template_2 = PromptTemplate.from_template(
+        """Given this as many summarize parts of a CV:{text}\n\n 
+        Write 3-9 sentences to summarize the CV, and it better including (if any) the following information: 
+        Name, year of birth, skills, experiences and years of experience, education, award and qualifications. 
+        If any of those information is missing then do not include it, do not say anything about it in the summary.
+        Importances: only give summarization, do not give any other explain. Do not begin a new line. Do not repeat the word "Summarization".
+        Summarization:"""
+    )
+    if not last_summary:
+        summarizer = template_1 | llm | StrOutputParser() 
+    if last_summary:
+        summarizer = template_2 | llm | StrOutputParser()
 
     response = summarizer.invoke(input_query)
 
@@ -52,11 +62,24 @@ def get_summarize_documents(docs):
             temp_summarize = summary_llm(doc.page_content)
             temp_summarize += " "
 
+    
     # Set result as a document, not text
     concat_summarize.append(
         Document(page_content=temp_summarize, metadata=temp_metadata)
     )
-    return concat_summarize
+
+    final_concat_summarize = []
+    for summarize in concat_summarize:
+        if len(summarize.page_content) < 1500:
+            final_concat_summarize.append(
+                Document(page_content=summarize.page_content, metadata=summarize.metadata))
+        else:
+            final_summary = summary_llm(summarize.page_content, last_summary=True)
+            final_concat_summarize.append(
+                Document(page_content= final_summary, metadata=summarize.metadata)
+            )
+
+    return final_concat_summarize
 
 if __name__ == "__main__":
     docs = load_docs(root_directory="test_data/", is_split=False)    

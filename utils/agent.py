@@ -34,7 +34,6 @@ def decide(input_query):
         If the HR do not require to find CVs or seeking for somebody new, simply decide "No".
         In case the HR require to find somebody/CV then decide "Yes".
         HR may require to find anotherone if the former query is not good, in this case decide "Yes".
-        HR may want to discuss more about the person that assistant chose, now simply decide "No".
         Decide:"""
     )
 
@@ -73,9 +72,10 @@ def execute_response(input_query, index, memory, streaming_callback):
         response = get_chat_response(input_text = input_query, memory = memory, streaming_callback=streaming_callback)
         return response
     else:   
-        retransformed_query = retransform(input_query)
+        retransformed_query = retransform(input_query, memory = memory)
         search_results = get_similarity_search_results(index=index, question = retransformed_query, top_k = 20)
         rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
+        print(rerank_results)
         #after get rerank results, we get the entities from database
         # print(rerank_results[0])
         # print(rerank_results[0].document['cv'])

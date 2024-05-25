@@ -13,22 +13,23 @@ st.title("Upload CVs")
 
 st.subheader("Your documents")
 docs = st.file_uploader(
-    "Select your files here and click on 'Upload'", type=["pdf", "docx"], accept_multiple_files=True)
+    "Select your files here and click on 'Upload'", type=["pdf", "docx","xlsx","xls"], accept_multiple_files=True)
 
 if st.button("Upload"):
     with st.spinner("Processing"):
         #st.session_state.vector_index = get_index_cv_upload(pdf_docs)
-        docs = upload_docs(docs)
-        docs = load_uploaded_docs(docs, include_metadata=True)
+        with st.spinner("Uploading CVs..."):
+            docs = upload_docs(docs)
+            docs = load_uploaded_docs(docs, include_metadata=True)
 
-        with st.spinner("Screening CVs and extract applicant information..."):
+        with st.spinner("Screening CVs..."):
             summarize_docs = get_summarize_documents(docs=docs)
 
+        with st.spinner("Extracting applicant information ..."):
             # Save embeddings of summarize docs to the database
             get_index_summary(summarize_docs)
 
             for summary_doc in summarize_docs:
-                #st.write(summary_doc.page_content)
 
                 # Extract entities from the summary
                 entities = get_entities(summary_doc.page_content)

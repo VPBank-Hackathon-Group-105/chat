@@ -71,7 +71,6 @@ def get_index_cv_upload(uploaded_files: list = []):
         embedding_function=embeddings
     )
 
-#anh ơi sửa giúp em cái này, upload summary của từng CVs lên database, không upload chunk lên nữa
 def get_index_summary(summarize_documents: list = []):
     
     embeddings = get_embedding(model = "openai")

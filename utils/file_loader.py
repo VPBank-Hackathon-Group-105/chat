@@ -3,8 +3,8 @@ import tempfile
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from concurrent.futures import ThreadPoolExecutor
-from tqdm import tqdm
 from dotenv import load_dotenv
+from .handle_xls_files import handle_xlsx
 
 load_dotenv()
 
@@ -43,7 +43,7 @@ def load_docs(root_directory: str, is_split: bool = False):
         processed_files = 0
 
         # Iterate through the PDF files in batches
-        for i in tqdm(range(0, total_files, batch_size)):
+        for i in range(0, total_files, batch_size):
             batch = pdf_files_to_process[i:i+batch_size]
             batch_docs = list(executor.map(process_pdf_batch, [batch]))
             for batch_result in batch_docs:
@@ -94,6 +94,17 @@ def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
                     doc.metadata.update(docx_file[1])
                 batch_docs.append(doc)
         return batch_docs
+    
+    def process_xlsx_batch(xlsx_files):
+        batch_docs = []
+        for xlsx_file in xlsx_files:
+            loaded_docs = handle_xlsx(xlsx_file[0] if include_metadata else xlsx_file)
+            for doc in loaded_docs:
+                doc.page_content = doc.page_content.replace('\x00', '')
+                if include_metadata:
+                    doc.metadata.update(xlsx_file[1])
+                batch_docs.append(doc)
+        return batch_docs
 
     # Get the list of PDF files to process
     pdf_files_to_process = []
@@ -120,11 +131,22 @@ def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
             if uploaded_file.lower().endswith(".doc") or uploaded_file.lower().endswith(".docx"):
                 docx_files_to_process.append((uploaded_file, metadata))
 
+    xlsx_files_to_process = []
+    if not include_metadata:
+        for uploaded_file in uploaded_files:
+            if uploaded_file.name.lower().endswith(".xls") or uploaded_file.name.lower().endswith(".xlsx") :
+                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                    temp_file.write(uploaded_file.getvalue())
+                    xlsx_files_to_process.append(temp_file.name)
+    else:
+        for uploaded_file, metadata in uploaded_files:
+            if uploaded_file.lower().endswith(".xls") or uploaded_file.lower().endswith(".xlsx"):
+                xlsx_files_to_process.append((uploaded_file, metadata))
     # Create a ThreadPoolExecutor for parallel processing
     with ThreadPoolExecutor() as executor:
         pdf_total_files = len(pdf_files_to_process)
         # Iterate through the PDF files in batches
-        for i in tqdm(range(0, pdf_total_files, batch_size)):
+        for i in range(0, pdf_total_files, batch_size):
             batch = pdf_files_to_process[i:i+batch_size]
             batch_docs = list(executor.map(process_pdf_batch, [batch]))
             for batch_result in batch_docs:
@@ -132,9 +154,17 @@ def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
 
         docx_total_files = len(docx_files_to_process)
         # Iterate through the docx files in batches
-        for i in tqdm(range(0, docx_total_files, batch_size)):
+        for i in range(0, docx_total_files, batch_size):
             batch = docx_files_to_process[i:i+batch_size]
             batch_docs = list(executor.map(process_docx_batch, [batch]))
+            for batch_result in batch_docs:
+                docs.extend(batch_result)
+
+        xlsx_total_files = len(xlsx_files_to_process)
+        # Iterate through the xlsx files in batches
+        for i in range(0, xlsx_total_files, batch_size):
+            batch = xlsx_files_to_process[i:i+batch_size]
+            batch_docs = list(executor.map(process_xlsx_batch, [batch]))
             for batch_result in batch_docs:
                 docs.extend(batch_result)
 
