@@ -2,6 +2,10 @@ import os
 
 from typing import Any
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -56,10 +60,10 @@ user_cv = Table(
     metadata,
     Column("id", Integer, Identity(), primary_key=True),
     Column("name", String, nullable=True),
-    Column("age", Integer, nullable=True),
+    Column("YOB", Integer, nullable=True),
     Column("cv_file_path", String, nullable=False),
-    Column("programing_language", JSON, nullable=True),
-    Column("programing_language", JSON, nullable=True),
-    Column("created_at", DateTime, server_default=func.now(), nullable=False),
-    Column("updated_at", DateTime, server_default=func.now(), onupdate=func.now()),
+    Column("skills", String, nullable=True),
+    Column("experience", String, nullable=True),
+    Column("education", String, nullable=True),
+    Column("award/qualification", String, nullable=True),
 )

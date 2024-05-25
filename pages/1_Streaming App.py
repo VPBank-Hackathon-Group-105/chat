@@ -39,7 +39,7 @@ with st.sidebar:
 
     if st.button("Upload"):
         with st.spinner("Processing"):
-            #st.session_state.vector_index = get_index_cv_upload(pdf_docs)
+            st.session_state.vector_index = get_index_cv_upload(pdf_docs)
             upload_docs(pdf_docs)
             st.success('PDF uploaded successfully!', icon="✅")
 

@@ -4,6 +4,9 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def load_docs(root_directory: str, is_split: bool = False):
 
@@ -21,8 +24,8 @@ def load_docs(root_directory: str, is_split: bool = False):
             if is_split:
                 batch_docs.extend(pdf_loader.load_and_split(
                     text_splitter=RecursiveCharacterTextSplitter(
-                        chunk_size=int(os.environ.get("CHUNK_SIZE", 300)),
-                        chunk_overlap=int(os.environ.get("CHUNK_OVERLAP", 10)),
+                        chunk_size=int(os.environ.get("CHUNK_SIZE",300)),
+                        chunk_overlap=int(os.environ.get("CHUNK_OVERLAP",10)),
                     )
                 ))
             else:
@@ -72,6 +75,8 @@ def load_uploaded_docs(uploaded_files: list):
             for doc in loaded_docs:
                 doc.page_content = doc.page_content.replace('\x00', '')
                 batch_docs.append(doc)
+        print(batch_docs)
+                
         return batch_docs
 
     # Get the list of PDF files to process
@@ -93,6 +98,13 @@ def load_uploaded_docs(uploaded_files: list):
             for batch_result in batch_docs:
                 docs.extend(batch_result)
                 processed_files += len(batch)
-    
+    print(docs[0])
     return docs
+
+if __name__ == "__main__":
+    # Test the load_docs function
+    docs = load_docs(root_directory="test_data/try", is_split=True)
+    print(f"Loaded {len(docs)} documents")
+    print(docs[1].page_content)
+    print(len(docs[1].page_content))
 
