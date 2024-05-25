@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from utils.database import user_cv, get_db, fetch_one
+from utils.database import user_cv, get_db, fetch_one, insert_new_cv_user
 from sqlalchemy import insert
 
 db = get_db(is_writer=True)
@@ -30,17 +30,7 @@ def upload_docs(uploaded_files: list):
             s3.Bucket(bucket).upload_file(temp_file.name, s3_file_path)
 
             # Insert metadata into database
-            query = (
-                insert(user_cv)
-                .values(
-                    {
-                        "cv_file_path": s3_file_path,
-                    }
-                )
-                .returning(user_cv)
-            )
-            result = fetch_one(db.execute(query))
-            db.commit()
+            result = insert_new_cv_user(db, s3_file_path)
 
             # Append metadata to list
             files_with_metadata.append(

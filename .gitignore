@@ -1,3 +1,4 @@
 .env
 test_data/
 __pycache__/
+logfile

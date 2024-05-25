@@ -1,4 +1,6 @@
 import os
+import pandas as pd
+import boto3
 
 from typing import Any
 
@@ -22,6 +24,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import insert, update, select
 
 READER_DATABASE_URL = os.environ.get("READER_DATABASE_URL")
 WRITER_DATABASE_URL = os.environ.get("WRITER_DATABASE_URL")
@@ -75,3 +78,92 @@ user_cv = Table(
     Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column("updated_at", DateTime, server_default=func.now(), onupdate=func.now()),
 )
+
+def insert_new_cv_user(db, s3_file_path):
+    try:
+        query = (
+            insert(user_cv)
+            .values(
+                {
+                    "cv_file_path": s3_file_path,
+                }
+            )
+            .returning(user_cv)
+        )
+        result = fetch_one(db.execute(query))
+        db.commit()
+    except:
+        db.rollback()
+        return None
+
+    return result
+
+def update_cv_user(db, entities, cv_user_id):
+    try:
+        query = (
+            update(user_cv)
+            .values({
+                "name": entities.get("name", None),
+                "summary": entities.get("summary", None),
+                "year_of_birth": entities.get("year_of_birth", None),
+                "skills": entities.get("skills", None),
+                "experiences": entities.get("experiences", None),
+                "year_of_experience": entities.get("year_of_experience", None),
+                "educations": entities.get("educations", None),
+                "awards": entities.get("awards", None),
+                "qualifications": entities.get("qualifications", None),
+            })
+            .where(user_cv.c.id == cv_user_id)
+            .returning(user_cv)
+        )
+        result = fetch_one(db.execute(query))
+        db.commit()
+    except:
+        db.rollback()
+        return None
+
+    return result
+
+def get_cv_users(per_page: int, page: int):
+    engine = create_engine(
+        url=READER_DATABASE_URL,
+        echo=False,
+        executemany_mode="values_plus_batch",
+    )
+
+    query = (
+        select(user_cv)
+        .with_only_columns(
+            user_cv.c.id,
+            user_cv.c.name,
+            user_cv.c.summary,
+            user_cv.c.year_of_birth,
+            user_cv.c.skills,
+            user_cv.c.experiences,
+            user_cv.c.year_of_experience,
+            user_cv.c.educations,
+            user_cv.c.awards,
+            user_cv.c.qualifications,
+            user_cv.c.cv_file_path,
+        )
+    )
+    query = query.order_by(user_cv.c.updated_at.desc())
+    query = query.limit(per_page).offset((page - 1) * per_page)
+
+    df = pd.read_sql(sql=query, con=engine)
+
+    s3_client = boto3.client('s3')
+
+    # Just specify folder_name:
+    def get_presigned_url(file_path):
+        url = s3_client.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={'Bucket': os.environ.get("BUCKET_NAME"), 'Key': file_path},
+            ExpiresIn=60,
+        )
+
+        return url
+
+    df["cv_file_path"] = df["cv_file_path"].apply(get_presigned_url)
+
+    return df
