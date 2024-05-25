@@ -1,10 +1,10 @@
-from llm_api import get_llm
-from file_loader import load_docs
+from .llm_api import get_llm
+from .file_loader import load_docs
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from io import StringIO
 import pandas as pd
-from summarize_cv import get_summary
+from .summarize_cv import get_summary
 
 def get_entities(input_query):
     llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0", temperature=0)

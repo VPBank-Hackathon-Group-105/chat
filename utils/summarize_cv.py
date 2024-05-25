@@ -1,5 +1,5 @@
-from llm_api import get_llm
-from file_loader import load_docs
+from .llm_api import get_llm
+from .file_loader import load_docs
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from io import StringIO
@@ -10,10 +10,10 @@ def summary_llm(input_query):
 
     template = PromptTemplate.from_template(
         """Given this as a part of CV:{text}\n\n 
-        Write 1-5 sentences to summarize the CV, and it better including (if any) the following information: 
+        Write 1-4 sentences to summarize the CV, and it better including (if any) the following information: 
         Name, year of birth, skills, experiences and years of experience, education, award and qualifications. 
         If any of those information is missing then do not include it, do not say anything about it in the summary.
-        Importance: Be as short as possible but at most specific.
+        Importance: Be as short as possible but at most specific, if the CVs use Vietnamese then summarize in English.
         Summarization:"""
     )
 

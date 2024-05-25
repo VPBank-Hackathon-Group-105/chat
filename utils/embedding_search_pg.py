@@ -54,6 +54,25 @@ def get_index_cv_upload(uploaded_files: list = []):
     if len(uploaded_files) > 0:
         loader = load_uploaded_docs(uploaded_files)
 
+        PGVector.from_documents(
+            documents=loader,
+            embedding=embeddings,
+            connection_string=WRITER_CONNECTION_STRING,
+        )
+
+    return PGVector(
+        connection_string=READER_CONNECTION_STRING,
+        embedding_function=embeddings
+    )
+
+#anh ơi sửa giúp em cái này, upload summary của từng CVs lên database, không upload chunk lên nữa
+def get_index_summary(uploaded_files: list = []):
+    
+    embeddings = get_embedding(model = "openai")
+    
+    if len(uploaded_files) > 0:
+        loader = load_uploaded_docs(uploaded_files)
+
         for doc in loader:
             print(doc)
         PGVector.from_documents(

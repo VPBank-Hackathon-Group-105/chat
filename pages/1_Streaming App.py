@@ -3,7 +3,9 @@ import utils.agent as agent
 from utils.upload_file import upload_docs
 from utils.embedding_search_pg import get_index_cv_upload
 from langchain_core.callbacks import BaseCallbackHandler
-
+from utils.summarize_cv import get_summary
+from utils.entity_extraction import get_entities
+from utils.file_loader import load_uploaded_docs
 #st.set_page_config(page_title="Chatbot")
 st.title("Chatbot") #page title
 
@@ -37,11 +39,24 @@ with st.sidebar:
     pdf_docs = st.file_uploader(
         "Select your files here and click on 'Upload'", type="pdf", accept_multiple_files=True)
 
+    docs = load_uploaded_docs(pdf_docs)
+
     if st.button("Upload"):
-        with st.spinner("Processing"):
-            st.session_state.vector_index = get_index_cv_upload(pdf_docs)
+        with st.spinner("Screening CVs..."):
+            summaries = get_summary(docs=docs)
+            for summary in summaries:
+                st.write(summary['cv'])
+
+        with st.spinner("Extracting applicant information..."):
+            #to be modify: upload entites to the database
+            #this is only test-case. (Anh sửa đoạn này giúp e nhé)
+            entities = get_entities(summaries[0]['cv'])
+
+        with st.spinner("Uploading..."):
+            #upload summaries to database (anh sửa đoạn này giúp e nhé, các summries của từng CVs đã được lấy ở trên nhưng ở dạng dictionary.)
+            st.session_state.vector_index = get_index_cv_upload(summaries)
             upload_docs(pdf_docs)
-            st.success('PDF uploaded successfully!', icon="✅")
+            st.success('CVs uploaded successfully!', icon="✅")
 
 if input_text: 
     with st.chat_message("user"): 

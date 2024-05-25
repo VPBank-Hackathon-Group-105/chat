@@ -78,7 +78,6 @@ def load_uploaded_docs(uploaded_files: list):
             for doc in loaded_docs:
                 doc.page_content = doc.page_content.replace('\x00', '')
                 batch_docs.append(doc)
-        print(batch_docs)
                 
         return batch_docs
 
@@ -101,7 +100,6 @@ def load_uploaded_docs(uploaded_files: list):
             for batch_result in batch_docs:
                 docs.extend(batch_result)
                 processed_files += len(batch)
-    print(docs[0])
     return docs
 
 if __name__ == "__main__":
