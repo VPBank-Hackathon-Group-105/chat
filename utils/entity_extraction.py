@@ -24,7 +24,6 @@ def get_entities(input_query):
 
     response = summarizer.invoke(input_query)
 
-    print(response)
     return validate_and_return_csv(response)    
 
 def validate_and_return_csv(response_text):

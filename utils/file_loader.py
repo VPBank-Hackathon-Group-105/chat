@@ -1,6 +1,6 @@
 import os
 import tempfile
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
@@ -80,26 +80,54 @@ def load_uploaded_docs(uploaded_files: list):
                 batch_docs.append(doc)
                 
         return batch_docs
+    
+    def process_docx_batch(docx_files):
+        batch_docs = []
+        for docx_file_path in docx_files:
+            docx_loader = Docx2txtLoader(docx_file_path)
+            loaded_docs = docx_loader.load()
+
+        for doc in loaded_docs:
+                doc.page_content = doc.page_content.replace('\x00', '')
+                batch_docs.append(doc)
+        return batch_docs
 
     # Get the list of PDF files to process
     pdf_files_to_process = []
     for uploaded_file in uploaded_files:
-        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            temp_file.write(uploaded_file.getvalue())
-            pdf_files_to_process.append(temp_file.name)
+        if uploaded_file.name.lower().endswith(".pdf"):
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                temp_file.write(uploaded_file.getvalue())
+                pdf_files_to_process.append(temp_file.name)
+
+    docx_files_to_process = []
+    for uploaded_file in uploaded_files:
+        if uploaded_file.name.lower().endswith(".doc") or uploaded_file.name.lower().endswith(".docx") :
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                temp_file.write(uploaded_file.getvalue())
+                docx_files_to_process.append(temp_file.name)
+
 
     # Create a ThreadPoolExecutor for parallel processing
     with ThreadPoolExecutor() as executor:
-        total_files = len(pdf_files_to_process)
-        processed_files = 0
+        pdf_total_files = len(pdf_files_to_process)
 
         # Iterate through the PDF files in batches
-        for i in tqdm(range(0, total_files, batch_size)):
+        for i in tqdm(range(0, pdf_total_files, batch_size)):
             batch = pdf_files_to_process[i:i+batch_size]
             batch_docs = list(executor.map(process_pdf_batch, [batch]))
             for batch_result in batch_docs:
                 docs.extend(batch_result)
-                processed_files += len(batch)
+
+        docx_total_files = len(docx_files_to_process)
+
+        # Iterate through the docx files in batches
+        for i in tqdm(range(0, docx_total_files, batch_size)):
+            batch = docx_files_to_process[i:i+batch_size]
+            batch_docs = list(executor.map(process_docx_batch, [batch]))
+            for batch_result in batch_docs:
+                docs.extend(batch_result)
+
     return docs
 
 if __name__ == "__main__":

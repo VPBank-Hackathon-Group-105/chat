@@ -38,14 +38,15 @@ class StreamHandler(BaseCallbackHandler):
 with st.sidebar:
     st.subheader("Your documents")
     pdf_docs = st.file_uploader(
-        "Select your files here and click on 'Upload'", type="pdf", accept_multiple_files=True)
+        "Select your files here and click on 'Upload'", accept_multiple_files=True)
 
     docs = load_uploaded_docs(pdf_docs)
 
     if st.button("Upload"):
         with st.spinner("Screening CVs..."):
             summaries = get_summary(docs=docs)
-
+            for summary in summaries:
+                st.write(summary['cv'])
         with st.spinner("Extracting applicant information..."):
             #to be modify: upload entites to the database
             #this is only test-case. (Anh sửa đoạn này giúp e nhé)

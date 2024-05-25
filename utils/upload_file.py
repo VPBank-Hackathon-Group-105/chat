@@ -7,7 +7,6 @@ load_dotenv()
 
 s3 = boto3.resource('s3')
 bucket = os.environ.get('BUCKET_NAME')
-print(bucket)
 def upload_docs(uploaded_files: list):
     files_with_metadata = []
 
