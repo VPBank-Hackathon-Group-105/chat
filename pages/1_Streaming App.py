@@ -6,7 +6,8 @@ from langchain_core.callbacks import BaseCallbackHandler
 from utils.summarize_cv import get_summary
 from utils.entity_extraction import get_entities
 from utils.file_loader import load_uploaded_docs
-#st.set_page_config(page_title="Chatbot")
+
+st.set_page_config(page_title="Chatbot")
 st.title("Chatbot") #page title
 
 
@@ -44,8 +45,6 @@ with st.sidebar:
     if st.button("Upload"):
         with st.spinner("Screening CVs..."):
             summaries = get_summary(docs=docs)
-            for summary in summaries:
-                st.write(summary['cv'])
 
         with st.spinner("Extracting applicant information..."):
             #to be modify: upload entites to the database
@@ -66,9 +65,7 @@ if input_text:
     
     #need an Agent here
     callback_handler = StreamHandler(container = st.chat_message("assistant").empty())    
-    # retransformed_query = retransform(input_text)
-    # search_results = get_similarity_search_results(index=st.session_state.vector_index, question = retransformed_query, top_k = 20)
-    # rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
+
 
     #print(rerank_results[0].document['content'])
     #st.write(rerank_results)
