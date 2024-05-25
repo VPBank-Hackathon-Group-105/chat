@@ -1,12 +1,18 @@
-from utils.llm_api import get_llm
-from utils.retransforming import retransform
+import os
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationSummaryBufferMemory
-from utils.embedding_search_pg import get_similarity_search_results
 from langchain_core.prompts import PromptTemplate
 
+from utils.embedding_search_pg import get_similarity_search_results
+from utils.llm_api import get_llm
+from utils.retransforming import retransform
 
-    
+
 def get_reason_response(results, text, memory,streaming_callback): #chat client function
     
 

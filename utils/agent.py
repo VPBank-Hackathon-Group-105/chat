@@ -1,11 +1,18 @@
+import os
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
-from utils.llm_api import get_llm
 from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chains import ConversationChain
-from .reasoning import get_reason_response
-from .retransforming import retransform
-from .embedding_search_pg import get_similarity_search_results
+
+from utils.llm_api import get_llm
+from utils.reasoning import get_reason_response
+from utils.retransforming import retransform
+from utils.embedding_search_pg import get_similarity_search_results
 from cohere_aws import Client
 
 co = Client(region_name="us-east-1")

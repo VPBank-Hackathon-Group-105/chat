@@ -1,8 +1,18 @@
-from .llm_api import get_llm
-from .file_loader import load_docs
+import os
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+from io import StringIO
+
+from langchain.docstore.document import Document
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from io import StringIO
+
+from utils.llm_api import get_llm
+from utils.file_loader import load_docs
+
 import pandas as pd
 
 def summary_llm(input_query):
@@ -23,24 +33,32 @@ def summary_llm(input_query):
 
     return response    
 
-def get_summary(docs):
-    temp = docs[0].metadata['source']
+def get_summarize_documents(docs):
+    if len(docs) == 0:
+        return []
+
+    temp_metadata = docs[0].metadata
     concat_summarize = []
     temp_summarize = ""
     for doc in docs:
-        if doc.metadata['source'] == temp:
+        if doc.metadata['source'] == temp_metadata['source']:
             temp_summarize = temp_summarize + summary_llm(doc.page_content)
             temp_summarize += " "
         else:
-            concat_summarize.append({"cv": temp_summarize, "source": temp})
-            temp = doc.metadata['source']
+            # Set result as a document, not text
+            concat_summarize.append(
+                Document(page_content=temp_summarize, metadata=temp_metadata)
+            )
+            temp_metadata = doc.metadata
             temp_summarize = summary_llm(doc.page_content)
             temp_summarize += " "
-    concat_summarize.append({"cv": temp_summarize, "source": temp})
+
+    # Set result as a document, not text
+    concat_summarize.append(
+        Document(page_content=temp_summarize, metadata=temp_metadata)
+    )
     return concat_summarize
 
 if __name__ == "__main__":
     docs = load_docs(root_directory="test_data/", is_split=False)    
-    print(get_summary(docs=docs))
-    
-            
+    print(get_summarize_documents(docs=docs))

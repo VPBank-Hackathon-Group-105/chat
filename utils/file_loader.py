@@ -52,7 +52,7 @@ def load_docs(root_directory: str, is_split: bool = False):
     return docs
 
 
-def load_uploaded_docs(uploaded_files: list):
+def load_uploaded_docs(uploaded_files: list, include_metadata: bool = False):
 
     # Set the batch size (number of files to process in each batch)
     batch_size = 10
@@ -63,8 +63,8 @@ def load_uploaded_docs(uploaded_files: list):
     # Function to process a batch of PDF files
     def process_pdf_batch(pdf_files, is_split = False):
         batch_docs = []
-        for pdf_file_path in pdf_files:
-            pdf_loader = PyPDFLoader(pdf_file_path)
+        for pdf_file in pdf_files:
+            pdf_loader = PyPDFLoader(pdf_file[0] if include_metadata else pdf_file)
             if is_split:
                 loaded_docs = pdf_loader.load_and_split(
                     text_splitter=RecursiveCharacterTextSplitter(
@@ -77,36 +77,49 @@ def load_uploaded_docs(uploaded_files: list):
             # Remove NUL characters from each loaded document
             for doc in loaded_docs:
                 doc.page_content = doc.page_content.replace('\x00', '')
+                if include_metadata:
+                    doc.metadata.update(pdf_file[1])
                 batch_docs.append(doc)
                 
         return batch_docs
     
     def process_docx_batch(docx_files):
         batch_docs = []
-        for docx_file_path in docx_files:
-            docx_loader = Docx2txtLoader(docx_file_path)
+        for docx_file in docx_files:
+            docx_loader = Docx2txtLoader(docx_file if include_metadata else docx_file[0])
             loaded_docs = docx_loader.load()
 
         for doc in loaded_docs:
                 doc.page_content = doc.page_content.replace('\x00', '')
+                if include_metadata:
+                    doc.metadata.update(docx_file[1])
                 batch_docs.append(doc)
         return batch_docs
 
     # Get the list of PDF files to process
     pdf_files_to_process = []
-    for uploaded_file in uploaded_files:
-        if uploaded_file.name.lower().endswith(".pdf"):
-            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-                temp_file.write(uploaded_file.getvalue())
-                pdf_files_to_process.append(temp_file.name)
+    if not include_metadata:
+        for uploaded_file in uploaded_files:
+            if uploaded_file.name.lower().endswith(".pdf"):
+                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                    temp_file.write(uploaded_file.getvalue())
+                    pdf_files_to_process.append(temp_file.name)
+    else:
+        for uploaded_file, metadata in uploaded_files:
+            if uploaded_file.lower().endswith(".pdf"):
+                pdf_files_to_process.append((uploaded_file, metadata))
 
     docx_files_to_process = []
-    for uploaded_file in uploaded_files:
-        if uploaded_file.name.lower().endswith(".doc") or uploaded_file.name.lower().endswith(".docx") :
-            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-                temp_file.write(uploaded_file.getvalue())
-                docx_files_to_process.append(temp_file.name)
-
+    if not include_metadata:
+        for uploaded_file in uploaded_files:
+            if uploaded_file.name.lower().endswith(".doc") or uploaded_file.name.lower().endswith(".docx") :
+                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                    temp_file.write(uploaded_file.getvalue())
+                    docx_files_to_process.append(temp_file.name)
+    else:
+        for uploaded_file, metadata in uploaded_files:
+            if uploaded_file.lower().endswith(".doc") or uploaded_file.lower().endswith(".docx"):
+                docx_files_to_process.append((uploaded_file, metadata))
 
     # Create a ThreadPoolExecutor for parallel processing
     with ThreadPoolExecutor() as executor:

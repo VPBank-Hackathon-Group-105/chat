@@ -1,8 +1,13 @@
+import os
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
 from langchain_openai import ChatOpenAI
 from langchain_aws import BedrockLLM, ChatBedrock
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import BedrockEmbeddings
-import os
 
 OPENAI_API_KEY = os.environ['OPENAI_API_KEY'] #hide this
 
