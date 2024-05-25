@@ -33,6 +33,7 @@ if st.button("Upload"):
 
                 # Extract entities from the summary
                 entities = get_entities(summary_doc.page_content)
+                entities["summary"] = summary_doc.page_content
                 for key, value in entities.items():
                     if isinstance(value, str) and value.lower() == "null":
                         entities[key] = None
