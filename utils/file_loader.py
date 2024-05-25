@@ -134,6 +134,6 @@ if __name__ == "__main__":
     # Test the load_docs function
     docs = load_docs(root_directory="test_data/try", is_split=True)
     print(f"Loaded {len(docs)} documents")
-    print(docs[1].page_content)
+    print(docs[1])
     print(len(docs[1].page_content))
 

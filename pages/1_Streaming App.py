@@ -54,8 +54,8 @@ with st.sidebar:
 
         with st.spinner("Uploading..."):
             #upload summaries to database (anh sửa đoạn này giúp e nhé, các summries của từng CVs đã được lấy ở trên nhưng ở dạng dictionary.)
-            st.session_state.vector_index = get_index_cv_upload(summaries)
-            upload_docs(pdf_docs)
+            #st.session_state.vector_index = get_index_cv_upload(summaries)
+            #upload_docs(pdf_docs)
             st.success('CVs uploaded successfully!', icon="✅")
 
 if input_text: 
