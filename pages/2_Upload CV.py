@@ -33,12 +33,13 @@ if st.button("Upload"):
 
                 # Extract entities from the summary
                 entities = get_entities(summary_doc.page_content)
+                entities["summary"] = summary_doc.page_content
                 for key, value in entities.items():
                     if isinstance(value, str) and value.lower() == "null":
                         entities[key] = None
 
                 # Update the database with the entities
                 db = get_db(is_writer=True)
-                update_cv_user(db, summary_doc.metadata["cv_user_id"], entities)
+                update_cv_user(db, entities, summary_doc.metadata["cv_user_id"])
 
             st.success('CVs uploaded successfully!', icon="✅")
