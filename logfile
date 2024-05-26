@@ -276,3 +276,13 @@
 [2024-05-25 20:56:34,299] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
 [2024-05-25 20:56:39,770] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
 [2024-05-25 20:56:48,793] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 21:16:07,579] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 21:16:08,658] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 22:10:10,063] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 22:12:09,864] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 22:12:12,972] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 22:12:15,737] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 22:12:19,851] httpx INFO HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+[2024-05-25 22:12:35,859] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 22:12:41,351] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials
+[2024-05-25 22:12:45,033] botocore.credentials INFO Found credentials in shared credentials file: ~/.aws/credentials

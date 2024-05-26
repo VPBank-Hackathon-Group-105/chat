@@ -24,7 +24,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import insert, update, select
+from sqlalchemy import insert, update, select, and_
 
 READER_DATABASE_URL = os.environ.get("READER_DATABASE_URL")
 WRITER_DATABASE_URL = os.environ.get("WRITER_DATABASE_URL")
