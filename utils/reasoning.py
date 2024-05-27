@@ -13,7 +13,7 @@ from utils.llm_api import get_llm
 def get_reason_response(results, query, memory,streaming_callback): #chat client function
     
 
-    llm = get_llm(model= "anthropic.claude-3-sonnet-20240229-v1:0" ,streaming_callback = streaming_callback)
+    llm = get_llm(model= "anthropic.claude-3-sonnet-20240229-v1:0" ,streaming_callback = streaming_callback, temperature=0.4)
     prompt = PromptTemplate(input_variables=['history', 'input'], 
                             template="""The following is a conversation between a HR and an AI. 
                             Some CVs are found, the job of the AI is to draw a table that contain information each CVs.

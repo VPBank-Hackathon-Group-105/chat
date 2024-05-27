@@ -87,7 +87,7 @@ def get_index_summary(summarize_documents: list = []):
         embedding_function=embeddings
     )
 
-def get_similarity_search_results(index: PGVector, question: str, top_k: int = 5):
+def get_similarity_search_results(index: PGVector, question: str, top_k: int = 20):
     results = index.similarity_search_with_score(question, k=top_k)
     flattened_results = [{"content":res[0].page_content, "cv": res[0].metadata["cv_user_id"]} for res in results] #flatten results for easier display and handling
     return flattened_results

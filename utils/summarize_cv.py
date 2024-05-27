@@ -37,7 +37,7 @@ def summary_llm(input_query, last_summary=False):
         summarizer = template_1 | llm | StrOutputParser() 
     if last_summary:
         summarizer = template_2 | llm | StrOutputParser()
-
+    
     response = summarizer.invoke(input_query)
 
     return response    

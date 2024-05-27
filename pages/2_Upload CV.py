@@ -21,6 +21,22 @@ if st.button("Upload"):
         with st.spinner("Uploading CVs..."):
             docs = upload_docs(docs)
             docs = load_uploaded_docs(docs, include_metadata=True)
+            non_empty_docs = [doc for doc in docs if len(doc.page_content) != 0]
+
+            non_empty_docs_count = {}
+            for doc in docs:
+                print(doc)
+                if doc.metadata["source"] not in non_empty_docs_count:
+                    non_empty_docs_count[doc.metadata["source"]] = 0
+                
+            for doc in docs:
+                if len(doc.page_content) > 10:
+                    non_empty_docs_count[doc.metadata["source"]] += 1
+                
+            for doc in non_empty_docs_count:
+                if non_empty_docs_count[doc] == 0:
+                    st.error(f"Error: {doc} is empty")
+            docs = non_empty_docs
 
         with st.spinner("Screening CVs..."):
             summarize_docs = get_summarize_documents(docs=docs)
