@@ -16,8 +16,8 @@ from utils.retransforming import retransform
 from utils.embedding_search_pg import get_similarity_search_results
 from cohere_aws import Client
 
-co = Client(region_name="us-east-1")
-co.connect_to_endpoint(endpoint_name="cohere-rerank-v3-endpoint")
+#co = Client(region_name="us-east-1")
+#co.connect_to_endpoint(endpoint_name="cohere-rerank-v3-endpoint")
 
 def decide(input_query):
 
@@ -73,11 +73,11 @@ def execute_response(input_query, index, memory, streaming_callback):
         return response
     else:   
         retransformed_query = retransform(input_query, memory = memory)
-        search_results = get_similarity_search_results(index=index, question = retransformed_query, top_k = 20)
-        rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
-        cv_ids = [result.document['cv'] for result in rerank_results]
+        search_results = get_similarity_search_results(index=index, question = retransformed_query, top_k = 5)
+        #rerank_results = co.rerank(documents=search_results, query=retransformed_query, rank_fields=['content'], top_n=5)
+        #cv_ids = [result.document['cv'] for result in rerank_results]
         # if do not use rerank, use this line:
-        # cv_ids = [result['cv'] for result in search_results[:5]]
+        cv_ids = [result['cv'] for result in search_results]
         cv_information = query_cv(cv_ids)
         response = get_reason_response(results = cv_information['data'], query = input_query, memory = memory, streaming_callback=streaming_callback)
         return response
