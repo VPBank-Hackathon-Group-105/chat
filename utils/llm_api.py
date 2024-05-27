@@ -80,7 +80,7 @@ def get_llm(streaming_callback = None, model: str = "gpt-3.5-turbo-0125", temper
 
 def get_embedding(text= None, model: str = "openai"):
     if "openai" in model:
-        embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY, model="text-embedding-3-small")  #create a Embeddings client
+        embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY, model="text-embedding-3-large")  #create a Embeddings client
 
     else:
         embeddings = BedrockEmbeddings(region_name = "us-east-1") 
