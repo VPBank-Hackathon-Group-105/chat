@@ -197,13 +197,15 @@ def query_cv(ids):
 if __name__ == "__main__":
     settings = Settings(
         port=os.environ.get("PGVECTOR_PORT"),
-        server=os.environ.get("PGVECTOR_READER_HOST"),
+        server=os.environ.get("PGVECTOR_WRITER_HOST"),
         username=os.environ.get("PGVECTOR_USER"),
         password=os.environ.get("PGVECTOR_PASSWORD"),
         database_name=os.environ.get("PGVECTOR_DATABASE"),
     )
     db = DatabaseAurora(settings)
-    ids = (2, 3, 4)
-    query = "SELECT * FROM user_cv WHERE id IN ({})".format(','.join(map(str, ids)))
-    result = db.get_data(query)
-    print(result)
+    ids_to_delete = [471,472]  # replace with your actual list of ids
+    query = """
+    DELETE FROM public.user_cv
+    WHERE id IN ({});
+    """.format(','.join(map(str, ids_to_delete)))
+    db.execute(query)

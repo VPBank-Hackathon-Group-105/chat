@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from utils.database import user_cv, get_db, fetch_one, insert_new_cv_user
+from utils.database import get_db, insert_new_cv_user,delete_cv_user
 from sqlalchemy import insert
 
 db = get_db(is_writer=True)
@@ -43,3 +43,6 @@ def upload_docs(uploaded_files: list):
             )
 
     return files_with_metadata
+
+def delete_null_docs(ids):
+    delete_cv_user(db,ids)

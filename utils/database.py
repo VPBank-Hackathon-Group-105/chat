@@ -22,9 +22,9 @@ from sqlalchemy import (
     create_engine,
     func,
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import insert, update, select, and_
+from sqlalchemy import insert, update, select, delete
 
 READER_DATABASE_URL = os.environ.get("READER_DATABASE_URL")
 WRITER_DATABASE_URL = os.environ.get("WRITER_DATABASE_URL")
@@ -167,3 +167,18 @@ def get_cv_users(per_page: int, page: int):
     df["cv_file_path"] = df["cv_file_path"].apply(get_presigned_url)
 
     return df
+
+def delete_cv_user(db, ids_to_delete):
+    try:
+        query = (
+            delete(user_cv)
+            .where(user_cv.c.id.in_(ids_to_delete))
+            .returning(user_cv)
+        )
+        result = fetch_all(db.execute(query))
+        db.commit()
+    except:
+        db.rollback()
+        return None
+
+    return result
