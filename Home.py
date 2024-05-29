@@ -6,7 +6,7 @@ load_dotenv()
 st.title("Welcome! :grinning:") 
 st.markdown("## :white_check_mark: About this product")
 
-st.markdown("""This is a demo product of team 105 in the VPBank hackathon contest.""")
+st.markdown("""This is a demo product to find applicant up to the HR query.""")
 st.markdown("""
 
 ## :question: How to use:
