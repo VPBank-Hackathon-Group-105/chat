@@ -33,7 +33,7 @@ def get_entities(input_query):
         {{
             "name": "John Doe",
             "year_of_birth": null,
-            "skills": ["Java", "Python", "SQL"],
+            "skills": ["Java", "Python", "Trading API"],
             "experiences": [
                 "Built and maintain a URL categorization system.",
                 "Collaborate with the data science team on system requirements and architecture design",
@@ -42,8 +42,8 @@ def get_entities(input_query):
             ],
             "year_of_experience": 5,
             "educations": ["Bachelor of Science in Computer Science"],
-            "awards": null,
-            "qualifications": null
+            "awards": ["Third prize in ICPC","Hackathon winner","Publish paper"],
+            "qualifications": ["IELTS 7.0","AWS Certified Solutions Architect - Associate","CS50 Certificate"]
         }}
         
         Given this CV: {text}\n\n 

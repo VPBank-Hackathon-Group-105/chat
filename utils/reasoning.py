@@ -27,10 +27,9 @@ def get_reason_response(results, query, memory,streaming_callback): #chat client
         llm = llm, 
         prompt = prompt,
         memory = memory, #with the summarization memory
-        verbose = True #print out some of the internal states of the chain while running
     )
     input_text = query + " The result after search is: " + str(results) 
-    
+    print(query)
     chat_response = conversation_with_summary.invoke(input_text) #pass the user message and summary to the model
     return chat_response['response']
 

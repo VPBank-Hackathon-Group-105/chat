@@ -6,7 +6,6 @@ from langchain_core.callbacks import BaseCallbackHandler
 st.set_page_config(page_title="Chatbot")
 st.title("Chatbot") #page title
 
-
 if 'memory' not in st.session_state: 
     st.session_state.memory = agent.get_memory() 
 
@@ -39,7 +38,6 @@ if input_text:
     
     #need an Agent here
     callback_handler = StreamHandler(container = st.chat_message("assistant").empty())    
-
 
     #print(rerank_results[0].document['content'])
     #st.write(rerank_results)

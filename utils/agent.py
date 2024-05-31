@@ -21,20 +21,21 @@ from cohere_aws import Client
 
 def decide(input_query):
 
-    llm = get_llm(model = "anthropic.claude-3-sonnet-20240229-v1:0", temperature=0)
+    llm = get_llm(model = "anthropic.claude-3-haiku-20240307-v1:0", temperature=0)
 
     def _parse(text):
         return text.strip('"').strip("**")
 
     template = PromptTemplate.from_template(
         """
-        You are the decider whether to decide  "Yes" or "No" to start a tool finding for suitable applicant.
-        Remember, only say "Yes" or "No" and dont say anything else.
-        A HR is asking/saying:{input_query}. 
-        If the HR do not require to find CVs or seeking for somebody new, simply decide "No".
-        In case the HR require to find somebody/CV then decide "Yes".
-        HR may require to find anotherone if the former query is not good, in this case decide "Yes".
-        Decide:"""
+        An AI is assisting a HR to decide "Yes" or "No" to start a tool finding for suitable applicant.
+        AI only say "Yes" or "No" and doest not say anything else.
+        \nHR:{input_query}. 
+        \nIf the HR do not require to find CVs or seeking for somebody new, AI simply decide "No".
+        In case the HR require to find somebody/CV then AI decide "Yes".
+        HR may require to find anotherone, in this case AI decide "Yes".
+        If HR want to discuss more about an applicant that seems to be found, AI decide "No".
+        \nAI:"""
     )
 
     rewriter = template | llm | StrOutputParser() | _parse
@@ -60,7 +61,6 @@ def get_chat_response(input_text, memory, streaming_callback): #chat client func
     conversation_with_summary = ConversationChain( #create a chat client
         llm = llm,
         memory = memory, #with the summarization memory
-        verbose = True #print out some of the internal states of the chain while running
     )
     chat_response = conversation_with_summary.invoke(input_text) #pass the user message and summary to the model
     return chat_response['response']

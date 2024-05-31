@@ -4,13 +4,13 @@ import sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-from io import StringIO
 from langchain.docstore.document import Document
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 from utils.llm_api import get_llm
 from utils.file_loader import load_docs
+
 
 
 def summary_llm(input_query, last_summary=False):
